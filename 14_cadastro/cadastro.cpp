@@ -7,8 +7,8 @@ class Conta{
     protected:
         float balance;
         std::string clientId;
-        int id;
-        std::string type;
+        int id = 0;
+        std::string type = "Conta";
 
     public:
     Conta(int id, std::string clientId){
@@ -24,7 +24,7 @@ class Conta{
 
     void withdraw(float value){
         if(value>this->balance){
-            std::cout << "Saldo insuficiente" << std::endl;       
+            std::cout << "Saldo insuficiente na conta:" << getId() << std::endl;       
         }else{
             this->balance -= value;
         }
@@ -57,8 +57,8 @@ class Conta{
     }
 
     friend std::ostream& operator<<(std::ostream& os, Conta& conta){
-        os<< "Dados do cliente: " << std::endl;
-        os << "Id: " << conta.getId() << " Cliente: " << conta.getClientId() << " Saldo: " << conta.getBalance() << std::endl;
+        os<< "Dados da conta: " << std::endl;
+        os << "Id: " << conta.getId() << " Cliente: " << conta.getClientId() << " Saldo: " << conta.getBalance() << " Type: " << conta.getType() << std::endl;
         return os;
     }
 
@@ -134,28 +134,27 @@ class Banco {
     private:
         std::map<int, std::shared_ptr<Conta>> contas;
         std::map<std::string,std::shared_ptr<Cliente>> clientes;
-        int nextAccountId;
+        int nextAccountId = 0;
     public:
     
     Banco(){}
     
     void addCliente(std::string clientId){
-        this->clientes.insert(std::pair<std::string,std::shared_ptr<Cliente>>(clientId,std::make_shared<Cliente>(clientId)));
-
-        std::shared_ptr<Conta> cCorrente = std::make_shared<Corrente>(this->nextAccountId,clientId);
+        std::shared_ptr<Cliente> clienteNovo = std::make_shared<Cliente>(clientId);
+        this->clientes.insert(std::pair<std::string,std::shared_ptr<Cliente>>(clientId,clienteNovo));
+        
+        std::shared_ptr<Corrente> cCorrente = std::make_shared<Corrente>(this->nextAccountId,clientId);
         this->contas.insert(std::pair<int,std::shared_ptr<Conta>>(this->nextAccountId,cCorrente));
-        this->clientes[clientId]->addConta(cCorrente);
-        this->nextAccountId++;
-
-        std::shared_ptr<Conta> cPoupanca = std::make_shared<Poupanca>(this->nextAccountId,clientId);
+        nextAccountId+=1;
+        
+        std::shared_ptr<Poupanca> cPoupanca = std::make_shared<Poupanca>(this->nextAccountId,clientId);        
         this->contas.insert(std::pair<int,std::shared_ptr<Conta>>(this->nextAccountId,cPoupanca));
-        this->clientes[clientId]->addConta(cPoupanca);
-        this->nextAccountId++;
-
+        nextAccountId+=1;
+        clienteNovo->addConta(cCorrente);
+        clienteNovo->addConta(cPoupanca);
     }
     void deposit(int Idconta, float valor){
-        this->contas[Idconta]->deposit(valor);   
-
+        this->contas[Idconta]->deposit(valor);
     }
     void monthlyUpdate(){
         for(auto &c : this->contas){
@@ -166,17 +165,18 @@ class Banco {
     void transfer(int contaDe, int contaPara, float valor){
         this->contas[contaDe]->transfer(this->contas[contaPara],valor);
     }
+    
     void withdraw(int idConta, float Valor){
         this->contas[idConta]->withdraw(Valor); 
     }
 
     friend std::ostream& operator<<(std::ostream& os, Banco& banco){
         os << "Clientes: " << std::endl;
-        for(auto &c : banco.clientes){
+        for(auto c : banco.clientes){
             os << *(c.second) << std::endl;
         }
         os << "Contas: " << std::endl;
-        for(auto &c : banco.contas){
+        for(auto c : banco.contas){
             os << *(c.second) << std::endl;
         }
         return os;
@@ -185,19 +185,64 @@ class Banco {
 };
 
 int main (){
-    Banco b;
-    b.addCliente("123");
 
-    b.deposit(0,100);
+    Banco banco;
+    banco.addCliente("123");
+    banco.addCliente("456");
+    banco.deposit(0,100);
+    banco.deposit(1,200);
+    banco.deposit(2,300);
+    banco.deposit(3,400);
+    banco.monthlyUpdate();
 
-    b.monthlyUpdate();
+    while (true){
+        using namespace std;
+        string comando;
+        cout<< "Digite um comando: "<<endl;
+        cout << "mostrar, add, depositar, sacar, transferir, atualizar, sair" << endl;
+        cin >> comando;
 
-    std::cout << b << std::endl;
-
-
-
-
-
+        if(comando == "mostrar"){
+            cout << banco << endl;
+        }else if(comando == "add"){
+            string clienteID;
+            cout << "Digite o id do cliente: " << endl;
+            cin >> clienteID;
+            banco.addCliente(clienteID);
+        }else if(comando == "depositar"){
+            int idConta;
+            float valor;
+            cout << "Digite o id da conta: " << endl;
+            cin >> idConta;
+            cout << "Digite o valor: " << endl;
+            cin >> valor;
+            banco.deposit(idConta,valor);
+        }else if(comando == "sacar"){
+            int idConta;
+            float valor;
+            cout << "Digite o id da conta: " << endl;
+            cin >> idConta;
+            cout << "Digite o valor: " << endl;
+            cin >> valor;
+            banco.withdraw(idConta,valor);
+        }
+        else if(comando == "transferir"){
+            int contaDe;
+            int contaPara;
+            float valor;
+            cout << "Digite o id da conta de origem: " << endl;
+            cin >> contaDe;
+            cout << "Digite o id da conta de destino: " << endl;
+            cin >> contaPara;
+            cout << "Digite o valor: " << endl;
+            cin >> valor;
+            banco.transfer(contaDe,contaPara,valor);
+        }else if(comando == "atualizar"){
+            banco.monthlyUpdate();
+        }else if(comando == "sair"){
+            break;
+        }
+    }
 
     return 0;
 }
