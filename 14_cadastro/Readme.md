@@ -7,7 +7,7 @@
   - [Shell](#shell)
   - [Diagrama](#diagrama)
   - [Esqueleto](#esqueleto)
-  - [Solução](#solução)
+  - [Solução em C++](#solução-em-c)
 <!--TOC_END-->
 
 O objetivo dessa atividade é implementar uma agência bancária simplificada. Deve ser capaz de cadastrar cliente. Cada cliente inicia com uma conta poupança e uma conta corrente. Contas correntes tem taxa de administração e contas poupanças rendem juros.
@@ -238,7 +238,7 @@ class Solver{
     }
 }
 ```
-## Solução
+## Solução em C++
 
 
 ```cpp
