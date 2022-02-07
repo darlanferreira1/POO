@@ -15,7 +15,7 @@ Aprendendo POO em C++
   - [11_Busca](/11_busca/readme.md)
   - [12_busca_e_cinema_maps](/12_busca_e_cinema_maps/readme.md)
   - [13_Herança_Criativa](/13_heranca_criativa/readme.md)
-  - [14_Cadastro e Banco](/14_cadastro/Readme.md)
+  - [14_Cadastro e Banco](/14_cadastro)
   - [15_Hospital](/15_hospital/readme.md)
   - [16_Twiter](/16_twiter/readme.md)
 
