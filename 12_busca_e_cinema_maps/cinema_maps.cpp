@@ -144,12 +144,7 @@ class cinema{
 };
 
 int main(){
-   /*  sala sala1(10);
-    sala1.cu(); */
     cinema c = cinema(sala(10));
     c.nova_sala();
-
-
-
     return 0;
 }

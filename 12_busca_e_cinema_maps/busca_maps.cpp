@@ -116,31 +116,31 @@ class Agenda{
     }
     
     void addContato(Contato c){
-        contatos.insert(pair<string,Contato>(c.getNome(),c));
+            contatos.insert(pair<string,Contato>(c.getNome(),c));       
     }
 
     void rmContato(string contato){
         contatos.erase(contato);
     }
     
-     /* void buscarcontato (string padrao){
+    void buscarcontato (string padrao){
         vector<Contato> resultado;
         cout<<"\nResultado da busca por: " << padrao <<endl;
         for(auto contato : contatos){
 
             stringstream ss;
-            ss << contato.getNome();
-            for(auto fone : contato.getFone()){
+            ss << contato.second.getNome();
+            for(auto fone : contato.second.getFone()){
                 ss << fone.getLabel() << fone.getNumero();
             }
             string s = ss.str();
             if(s.find(padrao) != string::npos){
-                resultado.push_back(contato);
+                resultado.push_back(contato.second);
                 resultado[resultado.size()-1].listfones();
 
             }
         }
-    } */
+    }
     
 
     void printContatos(){
@@ -155,16 +155,17 @@ class Agenda{
 int main (){
     Agenda agenda;
     Contato c1("Joao meneses");
-    c1.addfone(Telefone("Celular","(11) 99999-9999"));
+    c1.addfone(Telefone("Celular","(11) 98988-9999"));
 
     Contato c2("Maria meneses");
-    c2.addfone(Telefone("Celular","(11) 99999-9999"));
-    c2.addfone(Telefone("Fixo","(11) 99999-9999"));
+    c2.addfone(Telefone("Celular","(11) 92222-9999"));
+    c2.addfone(Telefone("Fixo","(11) 99669-9999"));
 
     agenda.addContato(c1);
     agenda.addContato(c2);
 
     agenda.printContatos();
+    agenda.buscarcontato("(11) 99669-9999");
 
 
     return 0;
